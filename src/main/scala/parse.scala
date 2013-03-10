@@ -30,7 +30,7 @@ object Parse extends RegexParsers {
 
   def time: Parser[Time] =
     partialtime ~ offset ^^ {
-      case (pt ~ offs) => pt.copy(offset = Some(offs))
+      case (pt ~ offs) => pt.copy(offset = offs)
     }
 
   def partialtime: Parser[Time] =
