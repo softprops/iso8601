@@ -34,27 +34,28 @@ object DateTime {
 }
 
 case class DateTime(d: Date, t: Time) {
-
-  lazy val asCalendar = {
-    import java.util.GregorianCalendar
-    val c = new GregorianCalendar(d.year, d.month, d.day, t.hour, t.minute, t.second)
-    t.offset match {
-      case Plus(hour, min) =>
-        c.add(Calendar.HOUR, hour)
-        c.add(Calendar.MINUTE, min)
-        c
-      case Minus(hour, min) =>
-        c.add(Calendar.HOUR, -hour)
-        c.add(Calendar.MINUTE, -min)
-        c
-      case Zulu =>
-        c // +00:00 (no offset)
-    }
+  private def pad(i: Int, to: Int) =
+    ("%0" + to + "d").format(i)
+  lazy val asCalendar: Calendar = {
+    import java.util.{ GregorianCalendar, TimeZone }
+    val tz = TimeZone.getTimeZone("GMT%s".format(t.offset match {
+      case Plus(h, m) => "+%s:%s".format(pad(h, 2), pad(m, 2))
+      case Minus(h, m) => "-%s:%s".format(pad(h, 2), pad(m, 2))
+      case Zulu => ""
+    }))
+    val c = Calendar.getInstance(tz)
+    c.setLenient(false)
+    c.set(Calendar.YEAR, d.year)
+    c.set(Calendar.ERA, GregorianCalendar.AD)
+    c.set(Calendar.MONTH, d.month - 1)
+    c.set(Calendar.DAY_OF_MONTH, d.day)
+    c.set(Calendar.HOUR_OF_DAY, t.hour)
+    c.set(Calendar.MINUTE, t.minute)
+    c.set(Calendar.SECOND, t.second)
+    c
   }
 
   lazy val iso8601 = {
-    def pad(i: Int, to: Int) =
-      ("%0" + to + "d").format(i)
     "%s-%s-%sT%s:%s:%s%s%s".format(
       pad(d.year, 4), pad(d.month, 2), pad(d.day, 2),
       pad(t.hour, 2), pad(t.minute, 2), pad(t.second, 2),
