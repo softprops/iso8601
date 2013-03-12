@@ -2,7 +2,10 @@ package iso8601
 
 import scala.util.parsing.combinator.RegexParsers
 
-object Parse extends RegexParsers {
+/** todo: make this an object when its threadsafe
+ *  - https://github.com/scala/scala/blob/v2.10.0/src/library/scala/util/parsing/combinator/Parsers.scala#L158-L164
+ */
+class Parse extends RegexParsers {
 
   def datetime: Parser[DateTime] =
     (date ~ "[T|t]".r ~ time) ^^ {
@@ -67,4 +70,8 @@ object Parse extends RegexParsers {
     }
 
   def apply(in: String) = parseAll(datetime, in)
+}
+
+object Parse {
+  def apply(in: String) = new Parse()(in)
 }

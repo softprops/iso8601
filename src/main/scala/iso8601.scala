@@ -4,7 +4,7 @@ import java.util.Calendar
 
 object Iso8601 {
   def apply(in: String) = Parse(in) match {
-    case Parse.Success(dt, _) => Right(dt)
+    case pr if (pr.successful) => Right(pr.get)
     case _ => Left("malformed date: %s" format in)
   }
 
