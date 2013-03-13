@@ -1,5 +1,7 @@
 # iso8601
 
+[![Build Status](https://travis-ci.org/softprops/iso8601.png?branch=master)](https://travis-ci.org/softprops/iso8601)
+
 threadsafe and immutable internet [time](http://tools.ietf.org/html/rfc3339)
 
 ## usage
