@@ -73,5 +73,8 @@ class Parse extends RegexParsers {
 }
 
 object Parse {
-  def apply(in: String) = new Parse()(in)
+  def apply(in: String) = new Parse()(in) match {
+    case pr if (pr.successful) => Right(pr.get)
+    case _ => Left("malformed date: %s" format in)
+  }
 }
