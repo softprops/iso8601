@@ -1,11 +1,12 @@
 package iso8601
 
-import scala.util.parsing.combinator.RegexParsers
+import scala.util.parsing.combinator.{PackratParsers, RegexParsers}
 
 /** todo: make this an object when its threadsafe
  *  - https://github.com/scala/scala/blob/v2.10.0/src/library/scala/util/parsing/combinator/Parsers.scala#L158-L164
  */
-class Parse extends RegexParsers {
+class Parse extends RegexParsers
+               with PackratParsers {
 
   def datetime: Parser[DateTime] =
     (date ~ "[T|t]".r ~ time) ^^ {
