@@ -18,7 +18,7 @@ threadsafe and immutable internet [time](http://tools.ietf.org/html/rfc3339)
     }
 
 
-Once parsed, this library stores a representation of the the time in an
+Once parsed, this library stores a representation of the time in an
 intermediate type, `iso8601.DateTime` which can then be used to resolve an application specific
 representation of time. Out of the box this library provides a conversion to 
 the `java.util.Calendar`.
