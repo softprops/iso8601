@@ -62,11 +62,14 @@ object DateTime {
 
 /** iso8601 representation of internet time */
 case class DateTime(d: Date, t: Time) {
-  private def pad(i: Int, to: Int) =
+  private def pad(i: Int, to: Int = 2) =
     ("%0" + to + "d").format(i)
 
   lazy val valid = asCalendar.isLeft
 
+  /** This converts the timestamp to a GregorianCalendar
+   *  without leniency.
+   */
   lazy val asCalendar: Either[InvalidDateTime, Calendar] = {
     import java.util.{ GregorianCalendar, TimeZone }
     val tz = TimeZone.getTimeZone("GMT%s".format(t.offset match {
@@ -94,8 +97,8 @@ case class DateTime(d: Date, t: Time) {
 
   lazy val iso8601 = {
     "%s-%s-%sT%s:%s:%s%s%s".format(
-      pad(d.year, 4), pad(d.month, 2), pad(d.day, 2),
-      pad(t.hour, 2), pad(t.minute, 2), pad(t.second, 2),
+      pad(d.year, 4), pad(d.month), pad(d.day),
+      pad(t.hour), pad(t.minute), pad(t.second),
       t.secondFraction.map("." + _).getOrElse(""),
       t.offset match {
         case Zulu => "Z"
