@@ -69,5 +69,11 @@ implicit object YourTypeView extends From[YourType] {
 Format(newYourType) // iso 8601 formatted string
 ```
 
+## but Joda says...
+
+When asked how to properly format time in iso 8601 format on the jvm, a common answer is [use jodatime](http://stackoverflow.com/questions/2201925/converting-iso8601-compliant-string-to-java-util-date). This type of answer is not satisfying if you only want to format time. Jodatime is
+a wonderland of features for performing date math, and many other things. If you're not doing date math and many other things besides formatting
+time in iso 8601 format, you probably don't want a date math library. This library just focuses on [rfc3339](http://tools.ietf.org/html/rfc3339). That's it.
+
 
 Doug Tangren (softprops) 2013
