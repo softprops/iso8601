@@ -8,13 +8,15 @@ threadsafe and immutable internet [time](http://tools.ietf.org/html/rfc3339)
 
 ### parsing
 
-    import iso8601._
-    import java.util.Calendar
+```scala
+import iso8601._
+import java.util.Calendar
     
-    Parse(stamp).right.map {
-      case dt @ DateTime(Date(year, month, day), Time(hour, minute, second, offset)) =>
-        require(dt.valid)
-    }
+Parse(stamp).right.map {
+  case dt @ DateTime(Date(year, month, day), Time(hour, minute, second, offset)) =>
+    require(dt.valid)
+}
+```
 
 ### representing as ...
 
@@ -24,20 +26,24 @@ representation of time. DateTime objects provide an `as` method which takes a co
 `As[T]` where T may be any given type which is we can convert a DateTime to type T. Not all property formatted date times
 are logical times. As, such the `As[T]` interface returns an `Either` type.
 
-    datetime.as[Calendar]
-      .fold(handleInvalid, { calendar =>
-        // do something with java.util.Calendar
-      })
+```scala
+datetime.as[Calendar]
+  .fold(handleInvalid, { calendar =>
+    // do something with java.util.Calendar
+  })
+```
 
 You may provide your own `As[T]` conversions by bringing an implicit type class instance of your representation into scope
 
-    implicit val object AsMine extends is8601.As[MyType] {
-      def apply(dt: DateTime) = Right(...)
-    }
-    datetime.as[MyType]
-      .fold(handleInvalid, { myType =>
-        // do something with my type
-      })
+```scala
+implicit val object AsMine extends is8601.As[MyType] {
+  def apply(dt: DateTime) = Right(...)
+}
+datetime.as[MyType]
+  .fold(handleInvalid, { myType =>
+    // do something with my type
+  })
+```
 
 ### formatting
 
@@ -48,16 +54,20 @@ to the `iso8601.DateTime` type to do so. The `Format` object, which formats date
 
 This library comes out of the box with a `From[java.util.Calendar]` implementation.
 
-    Format(Calendar.getInstance) // 2013-03-13T22:16:54-04:00
+```scala
+Format(Calendar.getInstance) // 2013-03-13T22:16:54-04:00
+```
 
 To create your own `From[T]` instance, you can do the following.
 
-    implicit object YourTypeView extends From[YourType] {
-      def apply(yourType: YourType): iso8601.DateTime = {
-         convertYourType(yourType)
-      }
-    }
-    Format(newYourType) // iso 8601 formatted string
+```scala
+implicit object YourTypeView extends From[YourType] {
+  def apply(yourType: YourType): iso8601.DateTime = {
+    convertYourType(yourType)
+  }
+}
+Format(newYourType) // iso 8601 formatted string
+```
 
 
 Doug Tangren (softprops) 2013
