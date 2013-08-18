@@ -70,10 +70,18 @@ class Parse extends RegexParsers
       case "-" ~ hour ~ _ ~ min => Minus(hour, min)
     }
 
-  def apply(in: String) = parseAll(datetime, in)
+  def apply(in: String) =
+    parseAll(if (in.length > Parse.MaxLength) failure(
+      "%s was longer than %d chars" format(in, Parse.MaxLength)
+    ) else datetime, in)
 }
 
 object Parse {
+  /** The maximum number of characters expected
+   *  Tehis number percludes representations that
+   *  include the rarely used feature of fractions
+   *  of seconds */
+  val MaxLength = 25
   def apply(in: String) = new Parse()(in) match {
     case pr if (pr.successful) => Right(pr.get)
     case _ => Left("malformed date: %s" format in)

@@ -14,37 +14,50 @@ threadsafe and immutable internet [time](http://tools.ietf.org/html/rfc3339)
     Parse(stamp).right.map {
       case dt @ DateTime(Date(year, month, day), Time(hour, minute, second, offset)) =>
         require(dt.valid)
-        require(dt.iso8601 == stamp)
     }
 
+### representing as ...
 
 Once parsed, this library stores a representation of the time in an
 intermediate type, `iso8601.DateTime` which can then be used to resolve an application specific
-representation of time. Out of the box this library provides a conversion to 
-the `java.util.Calendar`.
+representation of time. DateTime objects provide an `as` method which takes a context bound type class instance of
+`As[T]` where T may be any given type which is we can convert a DateTime to type T. Not all property formatted date times
+are logical times. As, such the `As[T]` interface returns an `Either` type.
 
-    datetime.asCalendar.fold(handleInvalid, { calendar =>
-       // do something with java.util.Calendar
-    })
+    datetime.as[Calendar]
+      .fold(handleInvalid, { calendar =>
+        // do something with java.util.Calendar
+      })
+
+You may provide your own `As[T]` conversions by bringing an implicit type class instance of your representation into scope
+
+    implicit val object AsMine extends is8601.As[MyType] {
+      def apply(dt: DateTime) = Right(...)
+    }
+    datetime.as[MyType]
+      .fold(handleInvalid, { myType =>
+        // do something with my type
+      })
 
 ### formatting
 
-This library also supports formatting representations of time to iso8601 compliant timestamps
+This library also supports formatting representations of time to ISO 8601 compliant timestamps.
 
 This library needs to be able to convert a given representation of time
-to the `iso8601.DateTime` type to do so. The `Format` object, which formats dates, requires there to be a typeclass `Format.View[T]` for the given type to transform the type into an instance of `iso8601.DateTime`.
+to the `iso8601.DateTime` type to do so. The `Format` object, which formats dates, requires there to be a typeclass instance for `From[T]` for the given type to transform the type into an instance of `iso8601.DateTime`.
 
-This library comes out of the box with a `java.util.Calendar` View.
+This library comes out of the box with a `From[java.util.Calendar]` implementation.
 
     Format(Calendar.getInstance) // 2013-03-13T22:16:54-04:00
 
-To create your own view you can do the following.
+To create your own `From[T]` instance, you can do the following.
 
-    implicit object YourTypeView extends Format.View[YourType] {
+    implicit object YourTypeView extends From[YourType] {
       def apply(yourType: YourType): iso8601.DateTime = {
          convertYourType(yourType)
       }
     }
+    Format(newYourType) // iso 8601 formatted string
 
 
 Doug Tangren (softprops) 2013
