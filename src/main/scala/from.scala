@@ -9,6 +9,13 @@ trait From[T] {
 }
 
 object From {
+  implicit object FromLong extends From[Long] {
+    def apply(l: Long) = {
+      val c = Calendar.getInstance()
+      c.setTimeInMillis(l)
+      FromJavaCalendar(c)
+    }
+  }
   implicit object FromJavaCalendar extends From[Calendar] {
     def apply(c: Calendar) = {
       val d = Date(c.get(Calendar.YEAR),

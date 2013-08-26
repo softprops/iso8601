@@ -51,8 +51,8 @@ This library also supports formatting representations of time to ISO 8601 compli
 
 This library needs to be able to convert a given representation of time
 to the `iso8601.DateTime` type to do so. The `Format` object, which formats dates, requires there to be a typeclass instance for `From[T]` for the given type to transform the type into an instance of `iso8601.DateTime`.
-
-This library comes out of the box with a `From[java.util.Calendar]` implementation.
+              
+This library comes out of the box with `From[java.util.Calendar]` and `From[Long]` (Javas "difference, measured in milliseconds, between the current time and midnight, January 1, 1970 UTC") implementations.
 
 ```scala
 Format(Calendar.getInstance) // 2013-03-13T22:16:54-04:00
@@ -61,7 +61,7 @@ Format(Calendar.getInstance) // 2013-03-13T22:16:54-04:00
 To create your own `From[T]` instance, you can do the following.
 
 ```scala
-implicit object YourTypeView extends From[YourType] {
+implicit object FromYourType extends From[YourType] {
   def apply(yourType: YourType): iso8601.DateTime = {
     convertYourType(yourType)
   }
@@ -71,9 +71,9 @@ Format(newYourType) // iso 8601 formatted string
 
 ## but Joda says...
 
-When asked how to properly format time in iso 8601 format on the jvm, a common answer is [use jodatime](http://stackoverflow.com/questions/2201925/converting-iso8601-compliant-string-to-java-util-date). This type of answer is not satisfying if you only want to format time. Jodatime is
+When asked how to properly format time in ISO 8601 format on the jvm, a common answer is [use jodatime](http://stackoverflow.com/questions/2201925/converting-iso8601-compliant-string-to-java-util-date). This type of answer is not satisfying if you only want to format and parse time. Jodatime is
 a wonderland of features for performing date math, and many other things. If you're not doing date math and many other things besides formatting
-time in iso 8601 format, you probably don't want a date math library. This library just focuses on [rfc3339](http://tools.ietf.org/html/rfc3339). That's it.
+time in ISO 8601 format, you probably don't want a date math library. This library just focuses on [rfc3339](http://tools.ietf.org/html/rfc3339). That's it.
 
 
 Doug Tangren (softprops) 2013
