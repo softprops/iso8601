@@ -77,11 +77,8 @@ class Parse extends RegexParsers
 }
 
 object Parse {
-  /** The maximum number of characters expected
-   *  Tehis number percludes representations that
-   *  include the rarely used feature of fractions
-   *  of seconds */
-  val MaxLength = 25
+  /** The maximum reasonable number of characters expected */
+  val MaxLength = 30
   def apply(in: String) = new Parse()(in) match {
     case pr if (pr.successful) => Right(pr.get)
     case _ => Left("malformed date: %s" format in)
